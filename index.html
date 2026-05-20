@@ -321,7 +321,7 @@ const T = {
 
   status_on:    ['● online', '● 在线'],
   status_doing: ['Currently: shipping / debugging / vibing', '当前：交付中 / 调试中 / 摸鱼中'],
-  status_cpu:   ['CPU load: nominal', 'CPU 负载：正常'],
+  status_cpu:   ['CPU load: nominal (bare metal, stock clocks)', 'CPU 负载：正常（裸金属 · 默频）'],
 
   neofetch_user:['xiaoyuan151@homepage', '小源151@homepage'],
   neofetch_os:  ['OS: Guilin, Guangxi, China', 'OS: 中国广西桂林'],
@@ -339,11 +339,11 @@ const T = {
   neuro_tl:     ['Neuro & Evil karaoke TL pipeline', 'Neuro & Evil 歌回翻译流水线'],
   neuro_osu:    ['Osu! Osu! Osu!', 'Osu! Osu! Osu!'],
 
-  darkweb_msg:  ['no.', '没有。'],
+  darkweb_msg:  ['wrong window, buddy', '走错片场了'],
 
   repo_title:   ['source code for this page:', '本页源代码：'],
 
-  love_msg:     ['not applicable', '不适用'],
+  love_msg:     ['segfault at 0xDEADBEEF', '返回空指针'],
 
   cmd_notfound: ['zsh: command not found: ', 'zsh: 未找到命令: '],
   cmd_tryhelp:  ['type help for available commands', '输入 help 查看可用命令'],
@@ -739,10 +739,12 @@ body.addEventListener('click', e => {
 
 bootSequence();
 
-console.log('%cXiaoYuan151 %c— %c17 %c— %cGuilin',
+console.log('%cXiaoYuan151 %c— %c17 %c— %cGuilin %c· bare metal',
   'color:#82bcf8;font-size:15px;', 'color:#586371;', 'color:#c2cad4;',
-  'color:#586371;', 'color:#c2cad4;');
-console.log('%cgithub.com/XiaoYuan151/Homepage', 'color:#586371;');
+  'color:#586371;', 'color:#c2cad4;', 'color:#4ce084;');
+console.log('%cgithub.com/XiaoYuan151/Homepage %c— %czero-router AS209601',
+  'color:#586371;', 'color:#586371;', 'color:#fbc050;');
+console.log('%cpoking around the console, huh', 'color:#343d4d;font-style:italic;');
 </script>
 </body>
 </html>
