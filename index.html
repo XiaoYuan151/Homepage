@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="小源151">
+<title>小源151</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤓</text></svg>">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-deep:    #090c10;
+    --bg-window:  #11161d;
+    --bg-title:   #181d25;
+    --border:     #252b33;
+    --border-hi:  #3a4250;
+    --text:       #c4ccd6;
+    --text-dim:   #5e6a78;
+    --text-info:  #7cb8ff;
+    --text-link:  #6ba8f0;
+    --text-green: #4ade80;
+    --text-red:   #f87171;
+    --text-amber: #fbbf24;
+    --shadow-key: rgba(0,0,0,0.55);
+    --shadow-amb: rgba(0,0,0,0.3);
+  }
+
+  html, body { height: 100%; background: var(--bg-deep); }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cascadia Code', 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Menlo', 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(ellipse at 50% 35%, rgba(30,50,80,0.25) 0%, transparent 70%),
+      radial-gradient(ellipse at 80% 20%, rgba(20,40,70,0.15) 0%, transparent 50%),
+      var(--bg-deep);
+  }
+
+  /* ── window ──────────────────────────────────────────────────── */
+  .window {
+    width: 100%;
+    max-width: 740px;
+    height: 100vh;
+    max-height: 520px;
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.02) inset,
+      0 1px 2px rgba(0,0,0,0.3),
+      0 4px 12px var(--shadow-amb),
+      0 16px 48px var(--shadow-key),
+      0 0 120px rgba(30,60,100,0.08);
+    transition: border-color .25s ease;
+    animation: windowIn .6s ease-out both;
+  }
+  @keyframes windowIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.985); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .window:hover { border-color: var(--border-hi); }
+  .window:focus-within { border-color: rgba(100,160,220,0.35); }
+
+  /* ── titlebar ────────────────────────────────────────────────── */
+  .titlebar {
+    background: var(--bg-title);
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+    user-select: none;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: filter .2s;
+    position: relative;
+  }
+  .dot.r  { background: #ed6a5e; box-shadow: 0 0 0 .5px rgba(0,0,0,0.2) inset; }
+  .dot.y  { background: #f5bd4f; box-shadow: 0 0 0 .5px rgba(0,0,0,0.2) inset; }
+  .dot.g  { background: #61c454; box-shadow: 0 0 0 .5px rgba(0,0,0,0.2) inset; }
+  .dot:hover { filter: brightness(1.25); }
+  .titlebar .title {
+    flex: 1;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+    margin-right: 40px;
+  }
+
+  /* ── body ────────────────────────────────────────────────────── */
+  .body {
+    flex: 1;
+    padding: 16px 18px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    cursor: text;
+    line-height: 1.72;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    position: relative;
+  }
+  .body::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.018;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    z-index: 0;
+  }
+  .body::-webkit-scrollbar { width: 5px; }
+  .body::-webkit-scrollbar-track { background: transparent; }
+  .body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .body::-webkit-scrollbar-thumb:hover { background: var(--border-hi); }
+
+  /* ── output lines ────────────────────────────────────────────── */
+  #output { flex: 1; position: relative; z-index: 1; }
+  #output .line {
+    white-space: pre;
+    min-height: 1.45em;
+  }
+  #output .line.dim  { color: var(--text-dim); }
+  #output .line.err  { color: var(--text-red); }
+  #output .line.info { color: var(--text-info); }
+  #output .line.warn { color: var(--text-amber); }
+  #output a {
+    color: var(--text-link);
+    text-decoration: none;
+    transition: color .15s;
+  }
+  #output a:hover { color: #a0d0ff; text-decoration: underline; }
+
+  /* ── input line ──────────────────────────────────────────────── */
+  #input-line {
+    display: flex;
+    align-items: center;
+    min-height: 1.72em;
+    position: relative;
+    z-index: 1;
+  }
+  #prompt {
+    color: var(--text-green);
+    white-space: pre;
+    user-select: none;
+  }
+  #input-text { white-space: pre; }
+  #cursor {
+    display: inline-block;
+    width: 0.58em;
+    height: 1.08em;
+    background: var(--text);
+    margin-left: 1px;
+    animation: cursorBlink 1s step-end infinite;
+    vertical-align: text-bottom;
+    border-radius: 1px;
+  }
+  @keyframes cursorBlink { 50% { opacity: 0; } }
+
+  #hidden-input {
+    position: fixed;
+    left: -9999px;
+    opacity: 0;
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  /* ── mobile ──────────────────────────────────────────────────── */
+  @media (max-width: 750px) {
+    .window {
+      max-width: 100%;
+      max-height: 100vh;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+      animation: none;
+    }
+    .window:hover, .window:focus-within { border-color: transparent; }
+    body { font-size: 13px; }
+    .body { padding: 12px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="window">
+  <div class="titlebar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="title">小源151 — zsh — 80×24</span>
+  </div>
+  <div class="body" id="terminal-body">
+    <div id="output"></div>
+    <div id="input-line">
+      <span id="prompt"></span><span id="input-text"></span><span id="cursor"></span>
+    </div>
+  </div>
+</div>
+
+<input id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+<script>
+const $ = s => document.getElementById(s);
+const output  = $('output');
+const prompt  = $('prompt');
+const inText  = $('input-text');
+const cursor  = $('cursor');
+const hidden  = $('hidden-input');
+const body    = $('terminal-body');
+
+let cmdBuffer      = '';
+let composing      = false;
+let history        = [];
+let historyIdx     = -1;
+let animToken      = 0;
+let booted         = false;
+let acceptingInput = false;
+
+const P = '~ % ';
+
+const TOP    = '┌──────────────────────────────────────┐';
+const SPACER = '│                                      │';
+const BOT    = '└──────────────────────────────────────┘';
+
+const text1 = '│          小源151 · 17岁             │';
+const text2 = '│       广西桂林 · 工蜂 · 学生        │';
+const text3 = '│     C++  Python  FastAPI  v2ray     │';
+const text4 = '│     逆向  混音  WebSocket  Git      │';
+const text5 = '│    Neuro粉 · B站二创 · SiiWay      │';
+
+function renderMotd() {
+  addLine(TOP,    'dim');
+  addLine(SPACER, 'dim');
+  addLine(text1,  'info');
+  addLine(text2,  'info');
+  addLine(SPACER, 'dim');
+  addLine(text3,  'info');
+  addLine(text4,  'info');
+  addLine(SPACER, 'dim');
+  addLine(text5,  'info');
+  addLine(SPACER, 'dim');
+  addLine(BOT,    'dim');
+}
+
+function addLine(text, cls) {
+  const d = document.createElement('div');
+  d.className = 'line' + (cls ? ' ' + cls : '');
+  d.textContent = text;
+  output.appendChild(d);
+}
+function addHTML(html, cls) {
+  const d = document.createElement('div');
+  d.className = 'line' + (cls ? ' ' + cls : '');
+  d.innerHTML = html;
+  output.appendChild(d);
+}
+function scrollDown() {
+  body.scrollTop = body.scrollHeight;
+}
+function scrollIfNearBottom() {
+  if (body.scrollHeight - body.scrollTop - body.clientHeight < 50) {
+    body.scrollTop = body.scrollHeight;
+  }
+}
+function drawInput() {
+  inText.textContent = cmdBuffer;
+  scrollIfNearBottom();
+}
+
+function renderWelcome() {
+  output.innerHTML = '';
+  addLine(P + 'whoami', 'dim');
+  addLine('小源151');
+  addLine(P + 'cat /etc/motd', 'dim');
+  renderMotd();
+  addLine('');
+  addLine('输入 help 看能干嘛，或者随便输点啥 🤓', 'dim');
+  addLine('');
+}
+
+function run(cmd) {
+  addLine(P + cmd, 'dim');
+  const c = cmd.trim();
+  if (!c) { scrollDown(); return; }
+
+  history.push(c);
+  historyIdx = history.length;
+
+  switch (c) {
+    case 'help':
+    case '?':
+      addLine('whoami      你猜');
+      addLine('projects    我搞过的东西');
+      addLine('links       找我');
+      addLine('status      当前状态');
+      addLine('neofetch    系统信息');
+      addLine('motd        cat /etc/motd');
+      addLine('repo        源码在哪');
+      addLine('date        当前时间');
+      addLine('clear       清屏');
+      addLine('help        你在看的');
+      addLine('');
+      addLine('输错了也有回复，试试看 🤓');
+      break;
+
+    case 'whoami':
+      addLine('小源151');
+      addLine('17岁 | 学生 | Vibe Coding | 工蜂');
+      addLine('坐标广西桂林，出生浙江诸暨');
+      break;
+
+    case 'projects':
+      addLine('逆转Neuro 同人游戏中文化');
+      addLine('  参与了大（部分）翻译，花了大量时间和巧思', 'dim');
+      addLine('Neuro-sama 相关二创 / DJ Mix @ B站', 'dim');
+      addLine('vless/vmess 代理节点日常维护', 'dim');
+      addLine('Shizuku 歌回播放器翻译（Neuro & Evil 翻译组）', 'dim');
+      addLine('超频、硬件折腾、帮人排查技术问题', 'dim');
+      break;
+
+    case 'links':
+      addHTML('GitHub  <a href="https://github.com/XiaoYuan151" target="_blank" rel="noopener">github.com/XiaoYuan151</a>');
+      addHTML('B站     <a href="https://space.bilibili.com/488570832" target="_blank" rel="noopener">space.bilibili.com/488570832</a>');
+      break;
+
+    case 'motd':
+      renderMotd();
+      break;
+
+    case 'status':
+      addLine('🟢 在线');
+      addLine('当前可能在：写代码 / 刷B站 / 摸鱼');
+      addLine('CPU 负载：看心情');
+      addLine('社交能量：' + (new Date().getHours() > 22 || new Date().getHours() < 2 ? '充沛（熬夜中）' : '一般'));
+      break;
+
+    case 'neofetch':
+      addLine('         .---.');
+      addLine('        /     \\    小源151@homepage');
+      addLine('        \\.@-@./    ────────────────');
+      addLine("        /`\\_/`\\    OS: 广西桂林");
+      addLine('       //  _  \\\\   Uptime: 17年');
+      addLine('      | \\     )|_  Shell: zsh (vibing)');
+      addLine("     /`\\_`>  <_/ \\  DE: 教室-卧室");
+      addLine("     \\__/'---'\\__/  Status: 🟢 摸鱼中");
+      break;
+
+    case 'date':
+      addLine(new Date().toString());
+      break;
+
+    case 'clear':
+      output.innerHTML = '';
+      break;
+
+    case 'sudo':
+      addLine('你没权限 🤓', 'err');
+      break;
+    case 'rm':
+    case 'rm -rf':
+    case 'rm -rf /':
+      addLine('😡 别乱删东西', 'err');
+      break;
+    case 'exit':
+    case 'logout':
+      addLine('你退不出去的', 'warn');
+      break;
+
+    case 'neuro': case 'nt': case '蜂群':
+      addLine('🐝 蜂群/工蜂 | Neuro-sama 粉丝社群');
+      addLine('STNC 蜂群技术情报中心 成员');
+      addLine('Neuro & Evil 歌回播放器翻译组 成员');
+      addLine('');
+      addLine('Osu! Osu! Osu!');
+      break;
+
+    case '暗网':
+      addLine('暗网管理员跟我说再发这种给我砍成血雾', 'err');
+      break;
+
+    case 'repo':
+    case 'source':
+      addLine('这个页面的源码在 GitHub');
+      addHTML('<a href="https://github.com/XiaoYuan151" target="_blank" rel="noopener">github.com/XiaoYuan151</a>');
+      addLine('（部署上去之后你自己改这行）', 'dim');
+      break;
+
+    case '恋爱': case '恋愛':
+      addLine('恋爱？什么恋爱？');
+      addLine('二次元不香吗', 'dim');
+      break;
+
+    default:
+      addLine('command not found: ' + c + '  😡', 'err');
+      addLine('试试 help', 'dim');
+  }
+  scrollDown();
+}
+
+/* ── typewriter ────────────────────────────────────────────────── */
+function skipAnim() {
+  if (booted) return;
+  booted = true;
+  animToken++;
+  renderWelcome();
+  finishBoot();
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function type(text, cls, speed) {
+  const token = ++animToken;
+  const el = document.createElement('div');
+  el.className = 'line' + (cls ? ' ' + cls : '');
+  el.textContent = '';
+  output.appendChild(el);
+  for (const ch of text) {
+    if (animToken !== token) { el.textContent = text; return; }
+    el.textContent += ch;
+    scrollDown();
+    await sleep(speed || (18 + Math.random() * 38));
+  }
+}
+
+async function bootSequence() {
+  prompt.textContent = '';
+  cursor.style.display = 'none';
+
+  await sleep(350);
+  await type(P + 'whoami', 'dim', 22);
+  await sleep(220);
+  await type('小源151', '', 38);
+  await sleep(420);
+
+  await type(P + 'cat /etc/motd', 'dim', 22);
+  await sleep(160);
+
+  const motdRows = [
+    [TOP,    'dim'],
+    [SPACER, 'dim'],
+    [text1,  'info'],
+    [text2,  'info'],
+    [SPACER, 'dim'],
+    [text3,  'info'],
+    [text4,  'info'],
+    [SPACER, 'dim'],
+    [text5,  'info'],
+    [SPACER, 'dim'],
+    [BOT,    'dim'],
+  ];
+  for (const [text, cls] of motdRows) {
+    await type(text, cls, 5);
+  }
+
+  await sleep(320);
+  if (animToken > 0) return;
+  addLine('');
+  addLine('输入 help 看能干嘛，或者随便输点啥 🤓', 'dim');
+  addLine('');
+
+  finishBoot();
+}
+
+function finishBoot() {
+  booted = true;
+  acceptingInput = true;
+  prompt.textContent = P;
+  cursor.style.display = 'inline-block';
+  scrollDown();
+  hidden.focus();
+}
+
+/* ── input handling ────────────────────────────────────────────── */
+hidden.addEventListener('input', () => {
+  if (!acceptingInput || composing) return;
+  cmdBuffer = hidden.value;
+  drawInput();
+});
+hidden.addEventListener('compositionstart', () => { composing = true; });
+hidden.addEventListener('compositionend', () => {
+  composing = false;
+  cmdBuffer = hidden.value;
+  drawInput();
+});
+
+hidden.addEventListener('keydown', e => {
+  if (!acceptingInput) { e.preventDefault(); skipAnim(); return; }
+
+  switch (e.key) {
+    case 'Enter': {
+      e.preventDefault();
+      const cmd = cmdBuffer;
+      hidden.value = '';
+      cmdBuffer = '';
+      drawInput();
+      run(cmd);
+      break;
+    }
+    case 'ArrowUp': {
+      e.preventDefault();
+      if (!history.length) return;
+      if (historyIdx === history.length) historyIdx = history.length - 1;
+      else if (historyIdx > 0) historyIdx--;
+      hidden.value = history[historyIdx];
+      cmdBuffer = hidden.value;
+      drawInput();
+      break;
+    }
+    case 'ArrowDown': {
+      e.preventDefault();
+      if (historyIdx >= history.length - 1) {
+        historyIdx = history.length;
+        hidden.value = '';
+        cmdBuffer = '';
+      } else {
+        historyIdx++;
+        hidden.value = history[historyIdx];
+        cmdBuffer = hidden.value;
+      }
+      drawInput();
+      break;
+    }
+    case 'Tab': {
+      e.preventDefault();
+      const cmds = ['whoami','projects','links','status','neofetch','motd','repo','date','clear','help'];
+      const match = cmds.find(x => x.startsWith(cmdBuffer.trim().toLowerCase()));
+      if (match) { hidden.value = match; cmdBuffer = match; drawInput(); }
+      break;
+    }
+    case 'l':
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        output.innerHTML = '';
+        scrollDown();
+      }
+      break;
+    case 'Backspace':
+      requestAnimationFrame(() => { cmdBuffer = hidden.value; drawInput(); });
+      break;
+  }
+});
+
+body.addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  if (acceptingInput) hidden.focus();
+  else skipAnim();
+});
+
+bootSequence();
+
+console.log('%c小源151 %c· %c17岁 %c· %c工蜂 %c· %c广西桂林',
+  'color:#7cb8ff;font-size:15px;', 'color:#5e6a78;', 'color:#c4ccd6;',
+  'color:#5e6a78;', 'color:#c4ccd6;', 'color:#5e6a78;', 'color:#c4ccd6;');
+console.log('%c你在翻什么 🤓 源码随便看', 'color:#5e6a78;');
+</script>
+</body>
+</html>
