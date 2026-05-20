@@ -412,6 +412,42 @@ function renderWelcome() {
   addLine('');
 }
 
+// ── hidden commands (triggers encoded) ─────────────────────────
+const _d  = s => atob(s);
+const _du = s => decodeURIComponent(s);
+
+const _e = new Map([
+  [_d('c3Vkbw=='),           'sudo'],
+  [_d('cm0='),               'rm'],
+  [_d('cm0gLXJm'),           'rm'],
+  [_d('cm0gLXJmIC8='),       'rm'],
+  [_d('ZXhpdA=='),           'exit'],
+  [_d('bG9nb3V0'),           'exit'],
+  [_d('bmV1cm8='),           'neuro'],
+  [_d('bnQ='),               'neuro'],
+  [_du('%E8%9C%82%E7%BE%A4'),'neuro'],
+  [_du('%E6%9A%97%E7%BD%91'),'darkweb'],
+  [_du('%E6%81%8B%E7%88%B1'),'love'],
+  [_du('%E6%81%8B%E6%84%9B'),'love'],
+]);
+
+function _runHidden(type) {
+  switch (type) {
+    case 'sudo':   addLine(t('sudo_msg'), 'err'); break;
+    case 'rm':     addLine(t('rm_msg'), 'err'); break;
+    case 'exit':   addLine(t('exit_msg'), 'warn'); break;
+    case 'neuro':
+      addLine(t('neuro_title'));
+      addLine(t('neuro_stnc'));
+      addLine(t('neuro_tl'));
+      addLine('');
+      addLine(t('neuro_osu'));
+      break;
+    case 'darkweb': addLine(t('darkweb_msg'), 'err'); break;
+    case 'love':    addLine(t('love_msg'), 'dim'); break;
+  }
+}
+
 function run(cmd) {
   addLine(P + cmd, 'dim');
   const c = cmd.trim();
@@ -419,6 +455,8 @@ function run(cmd) {
 
   history.push(c);
   historyIdx = history.length;
+
+  if (_e.has(c)) { _runHidden(_e.get(c)); scrollDown(); return; }
 
   switch (c) {
     case 'help':
@@ -486,39 +524,10 @@ function run(cmd) {
       output.innerHTML = '';
       break;
 
-    case 'sudo':
-      addLine(t('sudo_msg'), 'err');
-      break;
-    case 'rm':
-    case 'rm -rf':
-    case 'rm -rf /':
-      addLine(t('rm_msg'), 'err');
-      break;
-    case 'exit':
-    case 'logout':
-      addLine(t('exit_msg'), 'warn');
-      break;
-
-    case 'neuro': case 'nt': case '蜂群':
-      addLine(t('neuro_title'));
-      addLine(t('neuro_stnc'));
-      addLine(t('neuro_tl'));
-      addLine('');
-      addLine(t('neuro_osu'));
-      break;
-
-    case '暗网':
-      addLine(t('darkweb_msg'), 'err');
-      break;
-
     case 'repo':
     case 'source':
       addLine(t('repo_title'));
       addHTML('<a href="https://github.com/XiaoYuan151/Homepage" target="_blank" rel="noopener">github.com/XiaoYuan151/Homepage</a>');
-      break;
-
-    case '恋爱': case '恋愛':
-      addLine(t('love_msg'), 'dim');
       break;
 
     default:
