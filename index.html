@@ -284,16 +284,16 @@ const L = (navigator.language || 'en').startsWith('zh') ? 1 : 0;
 // [English, 中文]
 const T = {
   motd: [
-    ['XiaoYuan151 — 17', 'Guilin, Guangxi — Student', null,
-     'C++  Python  FastAPI  v2ray', 'Reverse Eng.  Audio  WebSocket  Git', null,
-     'Neuro fan — Bilibili creator — SiiWay'],
-    ['小源151 — 17岁', '广西桂林 — 学生', null,
-     'C++  Python  FastAPI  v2ray', '逆向  混音  WebSocket  Git', null,
-     'Neuro粉 — B站二创 — SiiWay'],
+    ['XiaoYuan151 — 17', 'Guilin, Guangxi — BGP AS209601', null,
+     'C#  Python  Rust  JavaScript', 'BGP  Reverse Eng.  Audio  v2ray', null,
+     'Neuro-sama oshi — SiiWay — Bilibili'],
+    ['小源151 — 17岁', '广西桂林 — BGP AS209601', null,
+     'C#  Python  Rust  JavaScript', 'BGP  逆向  混音  v2ray', null,
+     'Neuro-sama 单推 — SiiWay — B站'],
   ],
-  whoami_name:  ['XiaoYuan151', '小源151'],
-  whoami_info:  ['17 | Student | Programmer', '17岁 | 学生 | 程序员'],
-  whoami_loc:   ['Guilin, Guangxi — born in Zhuji, Zhejiang', '广西桂林 — 出生于浙江诸暨'],
+  whoami_name:  ['XiaoYuan151 / 小源151 / 源神987', '小源151 / 源神987 / XiaoYuan151'],
+  whoami_info:  ['17 | Student | BGP Player (AS209601)', '17岁 | 学生 | BGP Player (AS209601)'],
+  whoami_loc:   ['Guilin, Guangxi, China', '中国广西桂林'],
   boot_hint:    ['Type help for available commands', '输入 help 查看可用命令'],
 
   help_title:   ['Available commands:', '可用命令：'],
@@ -310,10 +310,13 @@ const T = {
   help_footer:  ['Type any unrecognized command for a response', '输任意命令试试'],
 
   proj_title:   ['GyakutenNeuro — fan translation (zh-CN)', '逆转Neuro — 同人游戏中文化'],
-  proj_tl:      ['  contributed a significant portion of the translation', '  参与了大部分翻译，花了大量时间和巧思'],
+  proj_tl:      ['  contributed a significant portion of the translation', '  参与了大部分翻译'],
+  proj_studio:  ['XiaoYuan Studio — tools & experiments', 'XiaoYuan Studio — 工具与实验'],
+  proj_ai:      ['XiaoYuan AI — making interesting things', 'XiaoYuan AI — 做些有趣的东西'],
+  proj_bgp:     ['BGP Player — AS209601 with zero router', 'BGP Player — AS209601 (zero router)'],
   proj_neuro:   ['Neuro-sama fan content & DJ Mix @ Bilibili', 'Neuro-sama 相关二创 / DJ Mix @ B站'],
   proj_proxy:   ['vless/vmess proxy maintenance', 'vless/vmess 代理节点维护'],
-  proj_shizuku: ['Shizuku karaoke player translation (Neuro & Evil TL team)', 'Shizuku 歌回播放器翻译（Neuro & Evil 翻译组）'],
+  proj_shizuku: ['Shizuku karaoke player translation (Neuro & Evil TL team)', 'Shizuku 歌回播放器翻译（翻译组）'],
   proj_hw:      ['Hardware tinkering, overclocking, tech support', '硬件折腾、超频、技术支援'],
 
   status_on:    ['● online', '● 在线'],
@@ -321,8 +324,9 @@ const T = {
   status_cpu:   ['CPU load: nominal', 'CPU 负载：正常'],
 
   neofetch_user:['xiaoyuan151@homepage', '小源151@homepage'],
-  neofetch_os:  ['OS: Guilin, Guangxi', 'OS: 广西桂林'],
+  neofetch_os:  ['OS: Guilin, Guangxi, China', 'OS: 中国广西桂林'],
   neofetch_up:  ['Uptime: 17 years', 'Uptime: 17年'],
+  neofetch_shell:['Shell: zsh', 'Shell: zsh'],
   neofetch_de:  ['DE: classroom — bedroom', 'DE: 教室 — 卧室'],
   neofetch_st:  ['Status: ● online', 'Status: ● 在线'],
 
@@ -484,6 +488,9 @@ function run(cmd) {
     case 'projects':
       addLine(t('proj_title'));
       addLine(t('proj_tl'), 'dim');
+      addLine(t('proj_studio'), 'dim');
+      addLine(t('proj_ai'), 'dim');
+      addLine(t('proj_bgp'), 'dim');
       addLine(t('proj_neuro'), 'dim');
       addLine(t('proj_proxy'), 'dim');
       addLine(t('proj_shizuku'), 'dim');
@@ -493,6 +500,7 @@ function run(cmd) {
     case 'links':
       addHTML('GitHub    <a href="https://github.com/XiaoYuan151" target="_blank" rel="noopener">github.com/XiaoYuan151</a>');
       addHTML('Bilibili  <a href="https://space.bilibili.com/488570832" target="_blank" rel="noopener">space.bilibili.com/488570832</a>');
+      addHTML('Blog      <a href="https://blog.xiaoyuan151.com" target="_blank" rel="noopener">blog.xiaoyuan151.com</a>');
       break;
 
     case 'motd':
@@ -511,7 +519,7 @@ function run(cmd) {
       addLine('        \\.@-@./    ────────────────');
       addLine("        /`\\_/`\\    " + t('neofetch_os'));
       addLine('       //  _  \\\\   ' + t('neofetch_up'));
-      addLine('      | \\     )|_  Shell: zsh');
+      addLine('      | \\     )|_  ' + t('neofetch_shell'));
       addLine("     /`\\_`>  <_/ \\  " + t('neofetch_de'));
       addLine("     \\__/'---'\\__/  " + t('neofetch_st'));
       break;
